@@ -85,7 +85,7 @@ void compute_small_layer(
     data_T data_cache;
     acc_T acc[N_OUT];
 
-	#pragma HLS ARRAY_RESHAPE variable=weights complete dim=2
+    #pragma HLS ARRAY_RESHAPE variable=weights complete dim=2
     #pragma HLS ARRAY_PARTITION variable=acc complete dim=1
 
     Reset: for(int iacc = 0; iacc < N_OUT; iacc++)
@@ -93,15 +93,17 @@ void compute_small_layer(
         acc[iacc] = 0;
 
     NewInput: for(int ii = 0; ii < N_IN; ii++) {
-    #pragma HLS PIPELINE
-    	data_cache = data[ii];
+        #pragma HLS UNROLL
+        //#pragma HLS PIPELINE
+      	data_cache = data[ii];
         Product: for(int jj = 0; jj < N_OUT; jj++) {
             acc[jj] += data_cache * weights[ii][jj];
         }
     }
 
     Result: for(int ires = 0; ires < N_OUT; ires++)
-	#pragma HLS PIPELINE
+        #pragma HLS UNROLL
+        //#pragma HLS PIPELINE
         res[ires] = (res_T) (acc[ires] + (acc_T) biases[ires]);
 }
 
