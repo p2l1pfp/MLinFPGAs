@@ -31,7 +31,7 @@ namespace nnet {
 //       RELU Activation
 // *************************************************
 template<class data_T, class res_T, int N_IN>
-void  relu(data_T data[N_IN], res_T res[N_OUT])
+void  relu(data_T data[N_IN], res_T res[N_IN])
 {
     data_T datareg;
     for (int ii=0; ii<N_IN; ii++) {
@@ -42,7 +42,7 @@ void  relu(data_T data[N_IN], res_T res[N_OUT])
 }
 
 template<class data_T, class res_T, int N_IN, int MAX_INT>
-void  relu_max(data_T data[N_IN], res_T res[N_OUT])
+void  relu_max(data_T data[N_IN], res_T res[N_IN])
 {
     data_T datareg;
     for (int ii=0; ii<N_IN; ii++) {
@@ -54,7 +54,7 @@ void  relu_max(data_T data[N_IN], res_T res[N_OUT])
 }
 
 template<class data_T, class res_T, int N_IN>
-void  relu6(data_T data[N_IN], res_T res[N_OUT])
+void  relu6(data_T data[N_IN], res_T res[N_IN])
 {
     relu_max<data_T, res_T, N_IN, 6>(data, res);
 }
@@ -83,7 +83,7 @@ void init_sigmoid_table(data_T table_out[N_TABLE])
 }
 
 template<class data_T, class res_T, int N_IN, int TABLE_SIZE/*=1024*/>
-void  sigmoid(data_T data[N_IN], res_T res[N_OUT])
+void  sigmoid(data_T data[N_IN], res_T res[N_IN])
 {
     // Initialize the lookup table
     res_T sigmoid_table[TABLE_SIZE];
@@ -105,7 +105,7 @@ void  sigmoid(data_T data[N_IN], res_T res[N_OUT])
 
 // Default table size provided here:
 template<class data_T, class res_T, int N_IN>
-void  sigmoid(data_T data[N_IN], res_T res[N_OUT]){ sigmoid<data_T, res_T, N_IN, 1024>(data, res); }
+void  sigmoid(data_T data[N_IN], res_T res[N_IN]){ sigmoid<data_T, res_T, N_IN, 1024>(data, res); }
 
 
 // *************************************************
@@ -127,7 +127,7 @@ void init_tanh_table(data_T table_out[N_TABLE])
 
 
 template<class data_T, class res_T, int N_IN, int TABLE_SIZE/*=1024*/>
-void  tanh(data_T data[N_IN], res_T res[N_OUT])
+void  tanh(data_T data[N_IN], res_T res[N_IN])
 {
     // Initialize the lookup table
     res_T tanh_table[TABLE_SIZE];
@@ -150,7 +150,7 @@ void  tanh(data_T data[N_IN], res_T res[N_OUT])
 
 // Default table size provided here:
 template<class data_T, class res_T, int N_IN>
-void  tanh(data_T data[N_IN], res_T res[N_OUT]){ tanh<data_T, res_T, N_IN, 1024>(data, res); }
+void  tanh(data_T data[N_IN], res_T res[N_IN]){ tanh<data_T, res_T, N_IN, 1024>(data, res); }
 
 }
 
