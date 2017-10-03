@@ -33,8 +33,16 @@ namespace nnet {
 template<class data_T, class res_T, int N_IN>
 void  relu(data_T data[N_IN], res_T res[N_IN])
 {
+    //believe these two lines are not needed
+    //#pragma HLS ARRAY_PARTITION variable=data complete
+    //#pragma HLS ARRAY_PARTITION variable=res complete
+
+    //using unroll below instead
+    //#pragma HLS pipeline II=1 
+
     data_T datareg;
     for (int ii=0; ii<N_IN; ii++) {
+      #pragma HLS UNROLL 
         datareg = data[ii];
         if (datareg > 0) res[ii] = datareg;
         else res[ii] = 0;
@@ -44,6 +52,8 @@ void  relu(data_T data[N_IN], res_T res[N_IN])
 template<class data_T, class res_T, int N_IN, int MAX_INT>
 void  relu_max(data_T data[N_IN], res_T res[N_IN])
 {
+    #pragma HLS pipeline II=1
+
     data_T datareg;
     for (int ii=0; ii<N_IN; ii++) {
         datareg = data[ii];
@@ -85,6 +95,8 @@ void init_sigmoid_table(data_T table_out[N_TABLE])
 template<class data_T, class res_T, int N_IN, int TABLE_SIZE/*=1024*/>
 void  sigmoid(data_T data[N_IN], res_T res[N_IN])
 {
+    #pragma HLS pipeline II=1
+
     // Initialize the lookup table
     res_T sigmoid_table[TABLE_SIZE];
     init_sigmoid_table<res_T, TABLE_SIZE>(sigmoid_table);
@@ -129,6 +141,8 @@ void init_tanh_table(data_T table_out[N_TABLE])
 template<class data_T, class res_T, int N_IN, int TABLE_SIZE/*=1024*/>
 void  tanh(data_T data[N_IN], res_T res[N_IN])
 {
+    #pragma HLS pipeline II=1
+
     // Initialize the lookup table
     res_T tanh_table[TABLE_SIZE];
     init_tanh_table<res_T, TABLE_SIZE>(tanh_table);
