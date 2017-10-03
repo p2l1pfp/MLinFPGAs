@@ -31,6 +31,11 @@ void ex_1layer(
       unsigned short &const_size_in,
       unsigned short &const_size_out)
 {
+
+    #pragma HLS ARRAY_PARTITION variable=data complete
+    #pragma HLS ARRAY_PARTITION variable=res complete
+
+    #pragma HLS pipeline II=1
     // Remove ap ctrl ports (ap_start, ap_ready, ap_idle, etc) since we only use the AXI-Stream ports
     // #pragma HLS INTERFACE ap_ctrl_none port=return
 
@@ -40,7 +45,7 @@ void ex_1layer(
     const_size_in   = N_INPUTS;
     const_size_out  = N_OUTPUTS;
 
-    printf("hi! \n");
+    //printf("hi! \n");
 
     // ****************************************
     // NETWORK INSTATIATION
