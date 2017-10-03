@@ -17,10 +17,11 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "parameters.h"
+#include "higgs_2layer.h"
+
 #include "nnet_layer.h"
 #include "nnet_activation.h"
-
-#include "higgs_2layer.h"
 
 #include "weights/layer1_weights_10x32.h"
 #include "weights/layer1_biases_32x1.h"
@@ -31,7 +32,7 @@
 // See UG902 Vivado High Level Synthesis guide (2014.4) pg 157 Figure 1-49
 void higgs_2layer(
 		  input_t data[N_INPUTS],
-		  output_t res[N_OUTPUTS],
+		  result_t res[N_OUTPUTS],
 		  unsigned short &const_size_in,
 		  unsigned short &const_size_out)
 {

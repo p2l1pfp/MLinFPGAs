@@ -37,8 +37,8 @@ typedef ap_fixed<16,8> layer2_t;
 
 // Prototype of top level function for C-synthesis
 void higgs_2layer(
-      input_t &data[N_INPUTS],
-      result_t &res[N_OUTPUTS],
+      input_t data[N_INPUTS],
+      result_t res[N_OUTPUTS],
       unsigned short &const_size_in,
       unsigned short &const_size_out);
 

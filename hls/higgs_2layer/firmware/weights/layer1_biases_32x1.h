@@ -1,4 +1,4 @@
-bias_t biases2[N_LAYER_1] = {0,
+bias_t biases1[N_LAYER_1] = {0,
 0,
 0,
 0,

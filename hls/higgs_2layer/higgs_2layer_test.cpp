@@ -29,11 +29,11 @@
 int main(int argc, char **argv)
 {
 
-  input_t  data[N_LAYER_IN] = {0};
+  input_t  data_str[N_INPUTS] = {0};
   float answer[N_OUTPUTS] = {0};
 
   // Run the basic neural net block
-  result_t[N_OUTPUTS] res_str = {0};
+  result_t res_str[N_OUTPUTS] = {0};
   unsigned short size_in, size_out;
   higgs_2layer(data_str, res_str, size_in, size_out);
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
   // Print result vector
   int err_cnt = 0;
   float err, curr_data;
-  for (int ii = 0; ii < N_LAYER_OUT; ii++) {
+  for (int ii = 0; ii < N_OUTPUTS; ii++) {
     curr_data = res_str[ii];
     err = curr_data-answer[ii];
     std::cout << " Expected: " << answer[ii] << "   Received: " << curr_data << "  ErrVal: " << err << std::endl;
