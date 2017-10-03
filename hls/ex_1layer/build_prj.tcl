@@ -13,7 +13,7 @@ set_part {xc7z020clg484-3}
 create_clock -period 10 -name default
 #source "./fir_hls_prj/solution1/directives.tcl"
 csim_design
-# csynth_design
+csynth_design
 #cosim_design
 # export_design -format ip_catalog
 exit
