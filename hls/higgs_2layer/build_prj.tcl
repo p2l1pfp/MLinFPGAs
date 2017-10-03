@@ -15,5 +15,5 @@ create_clock -period 10 -name default
 csim_design
 csynth_design
 #cosim_design
-# export_design -format ip_catalog
+export_design -format ip_catalog
 exit

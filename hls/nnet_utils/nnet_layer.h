@@ -85,8 +85,13 @@ void compute_small_layer(
     data_T data_cache;
     acc_T acc[N_OUT];
 
-    #pragma HLS ARRAY_RESHAPE variable=weights complete dim=2
+    //to be optimized
+    //#pragma HLS ARRAY_RESHAPE variable=weights complete dim=2
+    #pragma HLS ARRAY_PARTITION variable=weights complete dim=0
     #pragma HLS ARRAY_PARTITION variable=acc complete dim=1
+    #pragma HLS ARRAY_PARTITION variable=biases complete dim=1
+
+    #pragma HLS pipeline II=1
 
     Reset: for(int iacc = 0; iacc < N_OUT; iacc++)
     #pragma HLS UNROLL
