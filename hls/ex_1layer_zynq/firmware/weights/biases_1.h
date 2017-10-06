@@ -1,0 +1,1 @@
+bias_t biases[N_OUTPUTS] =  {0.351608425379};
