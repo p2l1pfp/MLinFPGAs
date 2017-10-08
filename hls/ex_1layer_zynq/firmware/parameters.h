@@ -20,6 +20,6 @@ typedef ap_fixed<16,8> result_t;
 
 typedef ap_fixed<16,6> input_t ;
 typedef ap_fixed<16,8> output_t;
-typedef ap_axiu<32,4,5,5> apin_t; //The 32,4,5,5 is added to get the linking right
+typedef ap_axiu<32,1,1,1> apin_t; //The 32,4,5,5 is added to get the linking right
 //typedef ap_axiu<16,1,1,1> apin_t; 
 #endif 

@@ -5,7 +5,7 @@ puts "Building Full System"
 #set outputDir ./build/
 #file mkdir $outputDir
 set_property target_language VHDL [current_project]
-set_property ip_repo_paths [list ../hls/ex_1layer/ex_1layer_prj/solution1/impl/ip/ ../vivado/timer_subsystem/] [current_fileset] 
+set_property ip_repo_paths [list ../hls/ex_1layer_zynq/ex_1layer_prj/solution1/impl/ip/ ../vivado/timer_subsystem/] [current_fileset] 
 update_ip_catalog
 # clear
 set list [get_bd_intf_nets]
@@ -69,7 +69,7 @@ set_property -dict [list CONFIG.C_PROBE_IN0_WIDTH {64} CONFIG.C_NUM_PROBE_OUT {0
 
 #DNN
 create_bd_cell -type ip -vlnv xilinx.com:hls:ex_1layer:1.0 ex_1layer
-set_property -dict [list CONFIG.C_S_AXI_CONTROL_BUS_ADDR_WIDTH {32}] [get_bd_cells ex_1layer]
+#set_property -dict [list CONFIG.C_S_AXI_CONTROL_BUS_ADDR_WIDTH {32}] [get_bd_cells ex_1layer]
 
 # connections to Everything!!!!! (its more fun in the gui)
 connect_bd_net -net [get_bd_nets processing_system7_fclk_clk0] [get_bd_pins timer_subsystem_0/clk] [get_bd_pins processing_system7/FCLK_CLK0]
