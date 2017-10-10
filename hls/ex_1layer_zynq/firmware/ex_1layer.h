@@ -31,6 +31,6 @@ void ex_1layer_hw(
 
 input_t pop_stream(apin_t const &e);
 apin_t push_stream(output_t const &v, bool last = false);
-void ex_1layer(apin_t in_stream[N_INPUTS*MCR_SIZE],apin_t out_stream[N_OUTPUTS*MCR_SIZE]);//, volatile ap_uint<1> *hw_trig);
+void ex_1layer(apin_t in_stream[N_INPUTS*MCR_SIZE],apin_t out_stream[N_OUTPUTS*MCR_SIZE], volatile ap_uint<1> *hw_trig);
 
 #endif

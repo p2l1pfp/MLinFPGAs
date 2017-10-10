@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   //Now define the streams
   apin_t sdata_i[N_INPUTS];
   apin_t sdata_o[N_OUTPUTS];
-  //ap_uint<1> hw_trig;
+  ap_uint<1> hw_trig;
 
   // fill with random numbers at some point...
   for (int i = 0; i < N_INPUTS; ++i)  data_i[i] = 0;
@@ -45,9 +45,8 @@ int main(int argc, char **argv) {
   for (int i = 0; i < N_OUTPUTS; ++i) sdata_o[i] = push_stream(data_o[i],i==(N_OUTPUTS-1));
 
   // top function!
-  ex_1layer(sdata_i, sdata_o);//, &hw_trig);
+  ex_1layer(sdata_i, sdata_o, &hw_trig);
   // do some validation down here
   // like compare results to full floating point
-
 }
 

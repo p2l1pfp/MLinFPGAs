@@ -81,7 +81,7 @@ int XEx_1layerSetupInterrupt() {
 	XScuGic_Enable(&ScuGic,XPAR_FABRIC_EX_1LAYER_INTERRUPT_INTR);
 	return XST_SUCCESS;
 }
-int Setup_HW_Accelerator(unsigned int INPUT[N_INPUTS],unsigned int OUTPUT[N_OUTPUTS], int dma_size_in,int dma_size_out) {
+int Setup_HW_Accelerator(float INPUT[N_INPUTS],float OUTPUT[N_OUTPUTS], int dma_size_in,int dma_size_out) {
 	int status = XEx_1LayerSetup();
 	if(status != XST_SUCCESS){
 		print("Error: example setup failed\n");
@@ -102,17 +102,15 @@ int Setup_HW_Accelerator(unsigned int INPUT[N_INPUTS],unsigned int OUTPUT[N_OUTP
 
 	return 0;
 }
-void dnn_ref(unsigned int input[N_INPUTS], unsigned int output[N_OUTPUTS], float weights[N_INPUTS][N_OUTPUTS],float bias[N_INPUTS]) {
-  int ia, ib;// id;
+void dnn_ref(float input[N_INPUTS], float output[N_OUTPUTS], float weights[N_INPUTS][N_OUTPUTS],float bias[N_INPUTS]) {
+  int ia, ib, id;
   for(ia=0; ia < N_OUTPUTS; ia++) output[ia] = 0.;
   for(ia=0; ia < N_INPUTS; ia++) { 
     for(ib=0; ib < N_OUTPUTS; ib++) { 
-      output[ib] += input[ia]  * weights[ia][ib]; 
+      output[ib] += input[ia] * weights[ia][ib]; 
     }
   }
   for(ia=0; ia < N_OUTPUTS; ia++) output[ia] += bias[ia];
-  //for(ia=0; ia < N_OUTPUTS; ia++) output[ia] = 0.;
-  //for(ia=0; ia < N_OUTPUTS; ia++) output[ia] = input[ia];
 }
 int Start_HW_Accelerator(void) {
 	//int status = XMmultSetup();
@@ -130,9 +128,9 @@ int Start_HW_Accelerator(void) {
 	XEx_1LayerStart(&xex_1layer_dev);
 	return(XST_SUCCESS);
 }
-int Run_HW_Accelerator(unsigned int  input[N_INPUTS], unsigned int output[N_OUTPUTS], int dma_size_in,int dma_size_out) {
+int Run_HW_Accelerator(float  input[N_INPUTS], float output[N_OUTPUTS], int dma_size_in,int dma_size_out) {
 	//transfer A to the Vivado HLS block
-        int status = XAxiDma_SimpleTransfer(&AxiDma, input, dma_size_in, XAXIDMA_DMA_TO_DEVICE);
+        int status = XAxiDma_SimpleTransfer(&AxiDma, (unsigned int) input, dma_size_in, XAXIDMA_DMA_TO_DEVICE);
 	if (status != XST_SUCCESS) {
 	  //print("Error: DMA transfer to Vivado HLS block failed\n");
 	  return XST_FAILURE;
@@ -141,7 +139,7 @@ int Run_HW_Accelerator(unsigned int  input[N_INPUTS], unsigned int output[N_OUTP
 	while (XAxiDma_Busy(&AxiDma, XAXIDMA_DMA_TO_DEVICE)) ;
 	
 	//get results from the Vivado HLS block
-	status = XAxiDma_SimpleTransfer(&AxiDma, output, dma_size_out,XAXIDMA_DEVICE_TO_DMA);
+	status = XAxiDma_SimpleTransfer(&AxiDma, (unsigned int) output, dma_size_out,XAXIDMA_DEVICE_TO_DMA);
 	if (status != XST_SUCCESS) {
 	  //print("Error: DMA transfer from Vivado HLS block failed\n");
 	  return XST_FAILURE;

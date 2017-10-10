@@ -26,7 +26,7 @@
 
 // simplified device IDs and system parameters
 #define GPIO_DEVICE_ID  	XPAR_XGPIOPS_0_DEVICE_ID
-#define NUM_TESTS           1024
+#define NUM_TESTS           (1024*1024)
 #define UPDATE_PACE         (100000000)
 #define N_INPUTS  10
 #define N_OUTPUTS 1
@@ -74,18 +74,18 @@ int  init_dma();
 // ********** main() starts here **********
 int main(){
   int   i, k, status, err=0;
-  float INPUT[N_INPUTS];
-  float OUTPUT_hw[N_OUTPUTS]; //hard
-  float OUTPUT_sw[N_OUTPUTS]; //soft
+  unsigned int INPUT[N_INPUTS];
+  unsigned int OUTPUT_hw[N_OUTPUTS]; //hard
+  unsigned int OUTPUT_sw[N_OUTPUTS]; //soft
 
-  u32   dma_size_in  = N_INPUTS  * sizeof(float);
-  u32   dma_size_out = N_OUTPUTS * sizeof(float);
+  u32   dma_size_in  = N_INPUTS  * sizeof(unsigned int);
+  u32   dma_size_out = N_OUTPUTS * sizeof(unsigned int);
   u32   per_loop_overhead;
   u32   function_call_overhead;
   u32   nn_sw_start_axiTimer, nn_sw_end_axiTimer;
   u32   nn_hw_start_axiTimer, nn_hw_end_axiTimer;
-  u32   run_time_sw_axiTimer, run_time_sw_timerSub;
-  u32   run_time_hw_axiTimer, run_time_hw_timerSub;
+  u32   run_time_sw_axiTimer=0, run_time_sw_timerSub=0;
+  u32   run_time_hw_axiTimer=0, run_time_hw_timerSub=0;
   
   // initialize the platform
   init_platform();
@@ -141,9 +141,10 @@ int main(){
     // compute and display calibration results
     per_loop_overhead = (loop_test_end - loop_test_start + 500) / 1000;			// +500 for rounding
     writeStr("   overhead for looping (per loop):"); writeInt_NL(per_loop_overhead);
+    //writeStr("   overhead for looping (per loop):"); writeFloat_NL(loop_test_end); writeStr(" "); writeFloat_NL(loop_test_start);
   }
   // Initialize 
-  for(i = 0; i < N_INPUTS; i++) INPUT[i] = (float) i*1.5;
+  for(i = 0; i < N_INPUTS; i++) INPUT[i] = (unsigned int) (i+1);
   // Run the software version of the DNN for some number of iterations
   for (k = 0; k < 1; k++) {
     writeStr("Running Software NN eval for a baseline on "); writeInt(NUM_TESTS); writeStr_NL("# of tests:");
@@ -154,7 +155,6 @@ int main(){
     for (i = 0; i < NUM_TESTS; i++) dnn_ref(INPUT,OUTPUT_sw,weights,biases);
     XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, 0); // stop the timer subsystem and hold the count
     nn_sw_end_axiTimer = XTmrCtr_GetTimerCounterReg(XPAR_TMRCTR_0_BASEADDR, TIMER_COUNTER_0);	// get the current time from the AXI timer
-    writeStr("  here ");
 #ifdef PERFORMANCE_CHECK
     {
       // define variables local to this block
@@ -169,28 +169,27 @@ int main(){
       writeStr("\tTotal run time (in 10ns cycles) for SW on Processor (AXI_TIMER):       ");
       writeInt_NL(run_time_sw_axiTimer);
       // read the duration to compute the performance
-      run_time_sw_timerSub  -= overhead - (2 * function_call_overhead);
+      //run_time_sw_timerSub  -= overhead - (2 * function_call_overhead);
       writeStr("\tTotal run time (in 10ns cycles) for SW on Processor (timer_subsystem): ");
       run_time_sw_timerSub = XGpioPs_Read(&PS_GPIOs,DATA_BANK);          	        // collect the lower 32 bits from the timer subsystem
       writeInt_NL(run_time_sw_timerSub);			
       // compute number of matrices per second
-      time_in_nsecs_per_nn = run_time_sw_timerSub * 10.0 / (float)(NUM_TESTS);
+      time_in_nsecs_per_nn = run_time_sw_axiTimer * 10.0 / (float)(NUM_TESTS);
       n_nns_per_sec       = 1000000000.0 / time_in_nsecs_per_nn;
       writeStr("\tNumber of NN evals per second:                                         ");
       writeFloat_NL(n_nns_per_sec);
+      writeStr("\tTime per nn                                         ");
+      writeFloat_NL(time_in_nsecs_per_nn);
     }
 #endif
     // Setup the HW Accelerator
     writeStr("  here setting up HW");
     Setup_HW_Accelerator(INPUT,OUTPUT_hw, dma_size_in,dma_size_out);
     nn_hw_start_axiTimer = XTmrCtr_GetTimerCounterReg(XPAR_TMRCTR_0_BASEADDR, TIMER_COUNTER_0);	// get the current time from the AXI timer
-    XTmrCtr_GetTimerCounterReg(XPAR_TMRCTR_0_BASEADDR, TIMER_COUNTER_0);	// get the current time from the AXI timer
     XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, 0);
     XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, TIMER_FORCE_RESET);
     XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, TIMER_CAPTURE_OE_LOW);	//
-    writeStr("  HW tests");
     for (i = 0; i < NUM_TESTS; i++) {
-      if(i % 2 == 0) writeInt(i);
       Start_HW_Accelerator();
       //XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, TIMER_CAPTURE_OE_LOW);	//
       Run_HW_Accelerator(INPUT, OUTPUT_hw, dma_size_in,dma_size_out);
@@ -198,10 +197,8 @@ int main(){
       //XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, 0);
     }
     //XGpioPs_Write(&PS_GPIOs, CONTROL_BANK, 0);  //e-assert the application running signal and capture the end timer value
-    run_time_hw_timerSub = XGpioPs_Read(&PS_GPIOs,DATA_BANK);
-    XTmrCtr_GetTimerCounterReg(XPAR_TMRCTR_0_BASEADDR, TIMER_COUNTER_0);
     nn_hw_end_axiTimer   = XTmrCtr_GetTimerCounterReg(XPAR_TMRCTR_0_BASEADDR, TIMER_COUNTER_0);
-    writeStr("  HW tests done");		
+    run_time_hw_timerSub = XGpioPs_Read(&PS_GPIOs,DATA_BANK);
 #ifdef PERFORMANCE_CHECK
     {
       // variables local to this block
@@ -220,10 +217,12 @@ int main(){
       writeStr("\tTotal run time (in 10ns cycles) for HW Accelerator (timer_subsystem): ");
       //run_time_hw_timerSub = XGpioPs_Read(&PS_GPIOs,DATA_BANK);    // collect the lower 32 bits from the timer subsystem
       writeInt_NL(run_time_hw_timerSub);															  // compute number of nns per second
-      time_in_nsecs_per_nn = run_time_hw_timerSub * 10.0 / (float)(NUM_TESTS);
+      time_in_nsecs_per_nn = run_time_hw_axiTimer * 10.0 / (float)(NUM_TESTS);
       n_nns_per_sec       = 1000000000.0 / time_in_nsecs_per_nn;
       writeStr("\tNumber of NNs per second:                                         ");
       writeFloat_NL(n_nns_per_sec);
+      writeStr("\tTime per nn                                         ");
+      writeFloat_NL(time_in_nsecs_per_nn);
       
       // HW vs. SW speedup factors
       writeStr_NL("Acceleration Factor...");
@@ -239,9 +238,9 @@ int main(){
 #ifdef BEHAVIOR_CHECK
 		//Compare the results from sw and hw
 		for (i = 0; i < N_OUTPUTS; i++) {
+		  writeStr("Check : " ); writeInt(i); writeStr(" SW:  "); writeFloat_NL(OUTPUT_sw[i]); writeStr(" HW:  "); writeFloat_NL(OUTPUT_hw[i]);
 		  if (OUTPUT_sw[i] != OUTPUT_hw[i]) {
 		    err = 1;
-		    break;
 		  }
 		}
 		// report error analysis

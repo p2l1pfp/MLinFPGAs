@@ -57,38 +57,39 @@ void ex_1layer_hw(
 }
 input_t pop_stream(apin_t const &e) {
 #pragma HLS INLINE off
-  input_t ret    = input_t(e.data);
-  volatile ap_uint<4>  strb = e.strb;
-  volatile ap_uint<4>  keep = e.keep;
-  volatile ap_uint<1>  user = e.user;
+  input_t ret    = e.data;
+  //input_t ret    = e.data >> 6;
+  volatile ap_uint<sizeof(input_o)>  strb = e.strb;
+  volatile ap_uint<sizeof(input_o)>  keep = e.keep;
+  volatile ap_uint<4>  user = e.user;
   volatile ap_uint<1>  last = e.last;
-  volatile ap_uint<1>  id   = e.id;
-  volatile ap_uint<1>  dest = e.dest;
+  volatile ap_uint<5>  id   = e.id;
+  volatile ap_uint<5>  dest = e.dest;
   return ret;
 }
 apin_t push_stream(output_t const &v, bool last) {
 #pragma HLS INLINE off
   apin_t e;
-  e.data = v;
-  e.strb = (1<<4)-1;
-  e.keep = (1<<4)-1;
+  e.data = v.to_uint(); //Convert this to a short
+  e.strb = (1<<sizeof(output_o))-1;
+  e.keep = (1<<sizeof(output_o))-1;
   e.user = 0;
   e.last = last ? 1 : 0;
   e.id   = 0;
   e.dest = 0;
   return e;
 }
-void ex_1layer(apin_t in_stream[N_INPUTS*MCR_SIZE],apin_t out_stream[N_OUTPUTS*MCR_SIZE]){//, volatile ap_uint<1> *hw_trig) {
+void ex_1layer(apin_t in_stream[N_INPUTS*MCR_SIZE],apin_t out_stream[N_OUTPUTS*MCR_SIZE], volatile ap_uint<1> *hw_trig) {
   // Map ports to Vivado HLS interfaces                                                                                                                
 #pragma HLS INTERFACE s_axilite        port=return bundle=CONTROL_BUS
 #pragma HLS INTERFACE axis             port=in_stream
 #pragma HLS INTERFACE axis             port=out_stream
-  //#pragma HLS INTERFACE ap_none register port=hw_trig
+#pragma HLS INTERFACE ap_none register port=hw_trig
 
   //Setup Trigger bit
-  //ap_uint<1> logic_zero = 0;
-  //ap_uint<1> logic_one = 1;
-  //*hw_trig = logic_one;
+  ap_uint<1> logic_zero = 0;
+  ap_uint<1> logic_one = 1;
+  *hw_trig = logic_one;
 
   //Readers to put to the hardware
   input_t  data  [N_INPUTS];
@@ -105,9 +106,9 @@ void ex_1layer(apin_t in_stream[N_INPUTS*MCR_SIZE],apin_t out_stream[N_OUTPUTS*M
 
  for(int i=0; i<N_OUTPUTS; i++) {
 #pragma HLS PIPELINE II=1
-   out_stream[i] = push_stream(output,i==(N_OUTPUTS-1));
+   out_stream[i] = push_stream(output[i],i==(N_OUTPUTS-1));
   }
- //*hw_trig = logic_zero; 
+ *hw_trig = logic_zero; 
  return;
 }
  
