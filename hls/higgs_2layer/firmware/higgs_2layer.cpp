@@ -41,14 +41,14 @@ void higgs_2layer(
 
     #pragma HLS pipeline II=1 
 
-   // Remove ap ctrl ports (ap_start, ap_ready, ap_idle, etc) since we only use the AXI-Stream ports
-    #pragma HLS INTERFACE ap_ctrl_none port=return
+    //Remove ap ctrl ports (ap_start, ap_ready, ap_idle, etc) since we only use the AXI-Stream ports
+    //#pragma HLS INTERFACE ap_ctrl_none port=return
 
     #pragma HLS DATAFLOW
 
-    // Connect size indicators
-    #pragma HLS INTERFACE ap_none port=const_size_in
-    #pragma HLS INTERFACE ap_none port=const_size_out
+    //Connect size indicators
+    //#pragma HLS INTERFACE ap_none port=const_size_in
+    //#pragma HLS INTERFACE ap_none port=const_size_out
     const_size_in   = N_INPUTS;
     const_size_out  = N_OUTPUTS;
 
