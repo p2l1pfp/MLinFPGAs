@@ -35,6 +35,14 @@ typedef ap_fixed<16,6> bias_t;
 typedef ap_fixed<16,8> layer1_t;
 typedef ap_fixed<16,8> layer2_t;
 
+//typedef ap_fixed<32,10> accum_t;
+//typedef ap_fixed<32,12> input_t;
+//typedef ap_fixed<32,12> result_t;
+//typedef ap_fixed<32,12> weight_t;
+//typedef ap_fixed<32,12> bias_t;
+//typedef ap_fixed<32,12> layer1_t;
+//typedef ap_fixed<32,12> layer2_t;
+
 // Prototype of top level function for C-synthesis
 void higgs_2layer(
       input_t data[N_INPUTS],
