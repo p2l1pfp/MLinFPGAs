@@ -34,6 +34,9 @@ int main(int argc, char **argv)
   //input_t  data_str[N_INPUTS] = {0.05216677, 1.78849339, 0.97410184, 0.72014093, 1.34292293, 1.75948036, 1.72571194, 2.03052092, 0.100394, 0.10963588};
   
   int max_nsamples = -1; //-1 for all
+
+  std::ofstream out_file;
+  out_file.open("tb_data/res.dat");
   
   int nsamples = 0;
   std::ifstream read_input_file("tb_data/in.dat", std::ifstream::in);
@@ -49,12 +52,16 @@ int main(int argc, char **argv)
     std::cout << "Sample " << nsamples << " prediction: ";
     for(int i=0; i<N_OUTPUTS; i++){
       std::cout << res_str[i] << " ";
+      out_file << res_str[i] << " ";
     }
     std::cout << std::endl;
+    out_file << std::endl;
 
     if(nsamples==0) std::cout << "Found network size: " << size_in << "x" << size_out << std::endl;
     if(nsamples == max_nsamples) break;
   }
+  read_input_file.close();
+  out_file.close();
 
   //std::cout << "Result from FPGA implementation: " << res_str[0] << std::endl;
   //std::cout << "Expected from keras training:  0.13149975" << std::endl;
