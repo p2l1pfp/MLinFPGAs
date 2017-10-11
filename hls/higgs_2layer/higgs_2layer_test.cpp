@@ -28,10 +28,9 @@
 
 int main(int argc, char **argv)
 {
-
-  input_t  data_str[N_INPUTS] = {0};
-  float answer[N_OUTPUTS] = {0};
-
+  
+  input_t  data_str[N_INPUTS] = {0.05216677, 1.78849339, 0.97410184, 0.72014093, 1.34292293, 1.75948036, 1.72571194, 2.03052092, 0.100394, 0.10963588};
+  
   // Run the basic neural net block
   result_t res_str[N_OUTPUTS] = {0};
   unsigned short size_in, size_out;
@@ -39,16 +38,8 @@ int main(int argc, char **argv)
 
   std::cout << "Found network size: " << size_in << "x" << size_out << std::endl;
 
-  // Print result vector
-  int err_cnt = 0;
-  float err, curr_data;
-  for (int ii = 0; ii < N_OUTPUTS; ii++) {
-    curr_data = res_str[ii];
-    err = curr_data-answer[ii];
-    std::cout << " Expected: " << answer[ii] << "   Received: " << curr_data << "  ErrVal: " << err << std::endl;
-    if (abs(err) > 0.5) err_cnt++;
-  }
-  std::cout<< err_cnt << std::endl;
-  //return err_cnt;
+  std::cout << "Result from FPGA implementation: " << res_str[0] << std::endl;
+  std::cout << "Expected from keras training:  0.13149975" << std::endl;
+
   return 0;
 }
