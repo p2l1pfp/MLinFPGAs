@@ -8,12 +8,14 @@ set_top higgs_2layer
 add_files firmware/higgs_2layer.cpp -cflags "-I[file normalize ../nnet_utils]"
 add_files -tb higgs_2layer_test.cpp -cflags "-I[file normalize ../nnet_utils]"
 add_files -tb firmware/weights
+add_files -tb tb_data
 open_solution -reset "solution1"
 set_part {xc7vx690tffg1927-2}
+#set_part {xcvu9p-flgb2104-2-i}
 create_clock -period 5 -name default
 #source "./fir_hls_prj/solution1/directives.tcl"
 csim_design
 csynth_design
-#cosim_design
-# export_design -format ip_catalog
+cosim_design
+#export_design -format ip_catalog
 exit
