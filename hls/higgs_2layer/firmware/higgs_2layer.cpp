@@ -44,7 +44,8 @@ void higgs_2layer(
     //Remove ap ctrl ports (ap_start, ap_ready, ap_idle, etc) since we only use the AXI-Stream ports
     //#pragma HLS INTERFACE ap_ctrl_none port=return
 
-    #pragma HLS DATAFLOW
+    //This is preventing pipelining. Comment out.
+    //#pragma HLS DATAFLOW
 
     //Connect size indicators
     //#pragma HLS INTERFACE ap_none port=const_size_in
@@ -57,8 +58,8 @@ void higgs_2layer(
     // ****************************************
 
     // LAYER 1
-    layer1_t logits1[N_LAYER_1];// = {0}; 
-    layer1_t layer1[N_LAYER_1];// = {0};
+    layer1_t logits1[N_LAYER_1];
+    layer1_t layer1[N_LAYER_1];
     #pragma HLS ARRAY_PARTITION variable=logits1 complete
     #pragma HLS ARRAY_PARTITION variable=layer1 complete
     
