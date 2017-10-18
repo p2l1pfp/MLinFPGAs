@@ -71,5 +71,5 @@ void higgs_2layer(
     #pragma HLS ARRAY_PARTITION variable=logits2 complete
     // LAYER 2
     nnet::compute_layer<layer1_t, layer2_t, weight_t, bias_t, accum_t, N_LAYER_1, N_OUTPUTS>(layer1, logits2, weights2, biases2);
-    nnet::sigmoid<layer2_t, layer2_t, N_OUTPUTS, 1024>(logits2,res);
+    nnet::sigmoid<layer2_t, result_t, N_OUTPUTS, 1024>(logits2,res);
 }
