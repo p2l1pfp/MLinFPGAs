@@ -17,33 +17,14 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef HIGGS_2LAYER_H_
-#define HIGGS_2LAYER_H_
+#ifndef HIGGS_3LAYER_H_
+#define HIGGS_3LAYER_H_
 
 #include <complex>
 #include "ap_int.h"
 #include "ap_fixed.h"
-//#include "hls_stream.h"
 
 #include "parameters.h"
-
-/*
-typedef ap_fixed<32,10> accum_t;
-typedef ap_fixed<16,6> input_t;
-typedef ap_fixed<16,8> result_t;
-typedef ap_fixed<16,6> weight_t;
-typedef ap_fixed<16,6> bias_t;
-typedef ap_fixed<16,8> layer1_t;
-typedef ap_fixed<16,8> layer2_t;
-*/
-
-typedef ap_fixed<32,10> accum_t;
-typedef ap_fixed<32,12> input_t;
-typedef ap_fixed<32,12> result_t;
-typedef ap_fixed<32,12> weight_t;
-typedef ap_fixed<32,12> bias_t;
-typedef ap_fixed<32,12> layer1_t;
-typedef ap_fixed<32,12> layer2_t;
 
 
 // Prototype of top level function for C-synthesis
