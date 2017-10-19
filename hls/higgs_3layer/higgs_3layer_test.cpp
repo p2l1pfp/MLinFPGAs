@@ -31,40 +31,9 @@ int main(int argc, char **argv)
 {
   
   input_t  data_str[N_INPUTS] = {0};
-  //input_t  data_str[N_INPUTS] = {0.05216677, 1.78849339, 0.97410184, 0.72014093, 1.34292293, 1.75948036, 1.72571194, 2.03052092, 0.100394, 0.10963588};
+  result_t res_str[N_OUTPUTS] = {0};
+  unsigned short size_in, size_out;
+  higgs_3layer(data_str, res_str, size_in, size_out);
   
-  int max_nsamples = -1; //-1 for all
-
-  std::ofstream out_file;
-  out_file.open("tb_data/res.dat");
-  
-  int nsamples = 0;
-  std::ifstream read_input_file("tb_data/in.dat", std::ifstream::in);
-  std::cout << "read in: " << read_input_file.is_open() << std::endl;
-  while(read_input_file>>data_str[0]>>data_str[1]>>data_str[2]>>data_str[3]>>data_str[4]>>
-	data_str[5]>>data_str[6]>>data_str[7]>>data_str[8]>>data_str[9]){
-    nsamples++;
-
-    result_t res_str[N_OUTPUTS] = {0};
-    unsigned short size_in, size_out;
-    higgs_3layer(data_str, res_str, size_in, size_out);
-
-    std::cout << "Sample " << nsamples << " prediction: ";
-    for(int i=0; i<N_OUTPUTS; i++){
-      std::cout << res_str[i] << " ";
-      out_file << res_str[i] << " ";
-    }
-    std::cout << std::endl;
-    out_file << std::endl;
-
-    if(nsamples==0) std::cout << "Found network size: " << size_in << "x" << size_out << std::endl;
-    if(nsamples == max_nsamples) break;
-  }
-  read_input_file.close();
-  out_file.close();
-
-  //std::cout << "Result from FPGA implementation: " << res_str[0] << std::endl;
-  //std::cout << "Expected from keras training:  0.13149975" << std::endl;
-
   return 0;
 }

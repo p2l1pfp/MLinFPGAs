@@ -29,6 +29,8 @@
 #include "weights/b2.h"
 #include "weights/w3.h"
 #include "weights/b3.h"
+#include "weights/w4.h"
+#include "weights/b4.h"
 
 // AXI-Stream port type is compatible with pointer, reference, & array input / ouputs only
 // See UG902 Vivado High Level Synthesis guide (2014.4) pg 157 Figure 1-49
@@ -75,21 +77,21 @@ void higgs_3layer(
     #pragma HLS ARRAY_PARTITION variable=layer2_out  complete
 
     nnet::compute_layer<layer1_t, layer2_t, weight_t, bias_t, accum_t, N_LAYER_1, N_LAYER_2>(layer1_out, logits2, w2, b2);
-    nnet::sigmoid<layer2_t, layer2_t, N_LAYER2, 1024>(logits2,layer2_out);
+    nnet::sigmoid<layer2_t, layer2_t, N_LAYER_2, 1024>(logits2,layer2_out);
 
     // LAYER 2 -> LAYER 3
     layer3_t logits3[N_LAYER_3];
     layer3_t  layer3_out[N_LAYER_3];
     #pragma HLS ARRAY_PARTITION variable=logits3 complete
     #pragma HLS ARRAY_PARTITION variable=layer3_out  complete
-    nnet::compute_layer<layer2_t, layer3_t, weight_t, bias_t, accum_t, N_LAYER_2, N_LAYER3>(layer2_out, logits3, w3, b3);
+    nnet::compute_layer<layer2_t, layer3_t, weight_t, bias_t, accum_t, N_LAYER_2, N_LAYER_3>(layer2_out, logits3, w3, b3);
     nnet::sigmoid<layer3_t, layer3_t, N_LAYER_3, 1024>(logits3,layer3_out);
 
 
     // LAYER 3 -> LAYER 4 (softmax, out)
-    result_t logits4[N_OUTPUT];
+    result_t logits4[N_OUTPUTS];
     #pragma HLS ARRAY_PARTITION variable=logits4 complete
-    nnet::compute_layer<layer3_t, result_t, weight_t, bias_t, accum_t, N_LAYER_3, N_OUTPUT>(layer3_out, logits4, w4, b4);
+    nnet::compute_layer<layer3_t, result_t, weight_t, bias_t, accum_t, N_LAYER_3, N_OUTPUTS>(layer3_out, logits4, w4, b4);
     nnet::sigmoid<result_t, result_t, N_OUTPUTS, 1024>(logits4,res); // FIXME this needs to become new softmax
 
 }
