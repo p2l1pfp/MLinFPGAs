@@ -118,6 +118,62 @@ void  sigmoid(data_T data[N_IN], res_T res[N_IN]){ sigmoid<data_T, res_T, N_IN, 
 
 
 // *************************************************
+//       Softmax Activation
+// *************************************************
+float exp_fcn_float(float input) {
+    return exp(input);
+}
+
+template<class data_T, int N_TABLE>
+void init_exp_table(data_T table_out[N_TABLE])
+{
+    for (int ii = 0; ii < N_TABLE; ii++) {
+        // First, convert from table index to X-value (signed 8-bit, range -8 to +8)
+        float in_val = 2*8.0*(ii-float(N_TABLE)/2.0)/float(N_TABLE);
+        // Next, compute lookup table function
+        data_T real_val = exp_fcn_float(in_val);
+        //std::cout << "Lookup table In Value: " << in_val << " Result: " << real_val << std::endl;
+        table_out[ii] = real_val;
+    }
+}
+
+template<class data_T, class res_T, int N_IN, int TABLE_SIZE/*=1024*/>
+void  softmax(data_T data[N_IN], res_T res[N_IN])
+{
+    // Initialize the lookup table
+    res_T exp_table[TABLE_SIZE];
+    init_exp_table<res_T, TABLE_SIZE>(exp_table);
+
+    // Index into the lookup table based on data for exponentials
+    res_T exp_res[N_IN];//same precision as rest?
+    res_T exp_res_sum=0;
+    data_T datareg;
+    int data_round;
+    int index;
+    for (int ii=0; ii<N_IN; ii++) {
+        #pragma HLS UNROLL 
+        data_round = data[ii]*TABLE_SIZE/16;
+        index = data_round + 8*TABLE_SIZE/16;
+        if (index < 0)   index = 0;
+        if (index > TABLE_SIZE-1) index = TABLE_SIZE-1;
+        exp_res[ii] = exp_table[index];
+        exp_res_sum += exp_table[index];
+    }
+
+    //Second loop to divide by sum of exponentials
+    for (int ii=0; ii<N_IN; ii++) {
+      #pragma HLS UNROLL
+      res[ii] = exp_res[ii]/exp_res_sum; //Note division used here!
+    }
+
+}
+
+// Default table size provided here:
+template<class data_T, class res_T, int N_IN>
+void  softmax(data_T data[N_IN], res_T res[N_IN]){ softmax<data_T, res_T, N_IN, 1024>(data, res); }
+
+
+// *************************************************
 //       TanH Activation
 // *************************************************
 template<class data_T, int N_TABLE>
