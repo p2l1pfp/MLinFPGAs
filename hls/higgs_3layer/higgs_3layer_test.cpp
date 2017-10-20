@@ -30,10 +30,17 @@
 int main(int argc, char **argv)
 {
   
-  input_t  data_str[N_INPUTS] = {0};
+  //input_t  data_str[N_INPUTS] = {0};
+  input_t  data_str[N_INPUTS] = {0.44044939, -0.08604704,  0.28499559,  0.1151934,   0.45350668, -0.46141511,
+				 -0.45673928, -0.37983865, -0.19626978, -0.24211307,  0.92032003,  0.00543885,
+				 -0.3272942,   0.22578914, -0.2764751,  -0.30281451, -0.16354406, -0.45568964,
+				 -0.2901558,  -0.10491186,  0.32512018, -0.20537674, -0.1578009,   0.16481732,
+				 0.02426484,  0.16045029,  0.08195856};
   result_t res_str[N_OUTPUTS] = {0};
   unsigned short size_in, size_out;
   higgs_3layer(data_str, res_str, size_in, size_out);
+  std::cout << "res_str: " << res_str[0] << " " << res_str[1] << std::endl;
+  std::cout << "keras: 0.9770025   0.02299754" << std::endl;
   
   return 0;
 }
