@@ -43,7 +43,7 @@ void higgs_3layer(
     #pragma HLS ARRAY_PARTITION variable=data complete
     #pragma HLS ARRAY_PARTITION variable=res complete
 
-    #pragma HLS pipeline II=1 
+    #pragma HLS pipeline II=1
 
     //Remove ap ctrl ports (ap_start, ap_ready, ap_idle, etc) since we only use the AXI-Stream ports
     //#pragma HLS INTERFACE ap_ctrl_none port=return
@@ -92,6 +92,6 @@ void higgs_3layer(
     result_t logits4[N_OUTPUTS];
     #pragma HLS ARRAY_PARTITION variable=logits4 complete
     nnet::compute_layer<layer3_t, result_t, weight_t, bias_t, accum_t, N_LAYER_3, N_OUTPUTS>(layer3_out, logits4, w4, b4);
-    nnet::sigmoid<result_t, result_t, N_OUTPUTS, 1024>(logits4,res); // FIXME this needs to become new softmax
+    nnet::softmax<result_t, result_t, N_OUTPUTS, 1024>(logits4,res);
 
 }
