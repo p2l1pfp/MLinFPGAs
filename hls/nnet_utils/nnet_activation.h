@@ -146,7 +146,7 @@ void  softmax(data_T data[N_IN], res_T res[N_IN])
 
     // Index into the lookup table based on data for exponentials
     res_T exp_res[N_IN];//same precision as rest?
-    res_T exp_res_sum;
+    res_T exp_res_sum=0;
     data_T datareg;
     int data_round;
     int index;
