@@ -12,12 +12,12 @@
 #define N_OUTPUTS      2
 
 typedef ap_fixed<32,10> accum_t;
-typedef ap_fixed<32,12> weight_t;
-typedef ap_fixed<32,12> bias_t;
-typedef ap_fixed<32,12> input_t;
-typedef ap_fixed<32,12> layer1_t;
-typedef ap_fixed<32,12> layer2_t;
-typedef ap_fixed<32,12> layer3_t;
-typedef ap_fixed<32,12> result_t;
+typedef ap_fixed<16,6> weight_t;
+typedef ap_fixed<16,6> bias_t;
+typedef ap_fixed<16,6> input_t;
+typedef ap_fixed<16,6> layer1_t;
+typedef ap_fixed<16,6> layer2_t;
+typedef ap_fixed<16,6> layer3_t;
+typedef ap_fixed<16,6> result_t;
 
 #endif 
