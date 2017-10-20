@@ -77,7 +77,7 @@ void higgs_3layer(
     #pragma HLS ARRAY_PARTITION variable=layer2_out  complete
 
     nnet::compute_layer<layer1_t, layer2_t, weight_t, bias_t, accum_t, N_LAYER_1, N_LAYER_2>(layer1_out, logits2, w2, b2);
-    nnet::relu<layer2_t, layer2_t, N_LAYER_2, 1024>(logits2,layer2_out);
+    nnet::relu<layer2_t, layer2_t, N_LAYER_2>(logits2,layer2_out);
 
     // LAYER 2 -> LAYER 3
     layer3_t logits3[N_LAYER_3];
@@ -85,16 +85,15 @@ void higgs_3layer(
     #pragma HLS ARRAY_PARTITION variable=logits3 complete
     #pragma HLS ARRAY_PARTITION variable=layer3_out  complete
     nnet::compute_layer<layer2_t, layer3_t, weight_t, bias_t, accum_t, N_LAYER_2, N_LAYER_3>(layer2_out, logits3, w3, b3);
-    nnet::relu<layer3_t, layer3_t, N_LAYER_3, 1024>(logits3,layer3_out);
+    nnet::relu<layer3_t, layer3_t, N_LAYER_3>(logits3,layer3_out);
 
     //debug
-    std::cout << "DEBUG DEBUG DEBUG" << std::endl;
-    for(int i=0; i<N_LAYER_3; i++) std::cout << layer3_out[i] << " ";
+    //for(int i=0; i<N_LAYER_3; i++) std::cout << layer3_out[i] << " ";
 
     // LAYER 3 -> LAYER 4 (softmax, out)
     result_t logits4[N_OUTPUTS];
     #pragma HLS ARRAY_PARTITION variable=logits4 complete
     nnet::compute_layer<layer3_t, result_t, weight_t, bias_t, accum_t, N_LAYER_3, N_OUTPUTS>(layer3_out, logits4, w4, b4);
-    nnet::softmax<result_t, result_t, N_OUTPUTS, 1024>(logits4,res);
+    nnet::softmax<result_t, result_t, N_OUTPUTS, 2048>(logits4,res);
 
 }
